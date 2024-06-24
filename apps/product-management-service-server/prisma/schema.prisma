@@ -1,0 +1,44 @@
+datasource db {
+  provider = "mongodb"
+  url      = env("DB_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model Folder {
+  backlogItems BacklogItem[]
+  createdAt    DateTime      @default(now())
+  id           String        @id @default(auto()) @map("_id") @db.ObjectId
+  name         String?
+  parentFolder String?
+  updatedAt    DateTime      @updatedAt
+}
+
+model BacklogItem {
+  createdAt   DateTime               @default(now())
+  description String?
+  folder      Folder?                @relation(fields: [folderId], references: [id])
+  folderId    String?                @db.ObjectId
+  id          String                 @id @default(auto()) @map("_id") @db.ObjectId
+  status      EnumBacklogItemStatus?
+  title       String?
+  updatedAt   DateTime               @updatedAt
+}
+
+model User {
+  createdAt DateTime @default(now())
+  email     String?  @unique
+  firstName String?
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  lastName  String?
+  password  String
+  roles     Json
+  updatedAt DateTime @updatedAt
+  username  String   @unique
+}
+
+enum EnumBacklogItemStatus {
+  Option1
+}
